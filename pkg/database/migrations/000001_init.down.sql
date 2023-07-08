@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS "link";
+DROP TABLE IF EXISTS "user";
