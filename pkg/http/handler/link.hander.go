@@ -3,80 +3,25 @@ package handler
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
 
 	inputs "github.com/almazatun/lien-court/pkg/common"
 	"github.com/almazatun/lien-court/pkg/common/helper"
-	jwt_ "github.com/almazatun/lien-court/pkg/common/jwt"
 	"github.com/almazatun/lien-court/pkg/services"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 )
 
-type AuthHandlerInstance struct{}
+type LinkHandlerInstance struct{}
 
-type AuthHandler interface {
-	Login(c *fiber.Ctx) error
-	Me(c *fiber.Ctx) error
+type LinkHandler interface {
+	List(c *fiber.Ctx) error
+	GetLink(c *fiber.Ctx) error
 }
 
-func (ah *AuthHandlerInstance) Login(c *fiber.Ctx) error {
-	loginUserInput := inputs.Login{}
-
-	//  Parse body into product struct
-	if err := c.BodyParser(&loginUserInput); err != nil {
-		log.Println(err)
-		c.Status(400).JSON(&fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
-		return nil
-	}
-
-	res, err := services.Login(loginUserInput)
-
-	if err != nil {
-		log.Println(err)
-
-		if res == nil {
-			c.Status(400).JSON(&fiber.Map{
-				"success": false,
-				"message": err.Error(),
-			})
-			return nil
-		}
-
-		c.Status(500).JSON(&fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
-		return nil
-	}
-
-	id := fmt.Sprintf("%v", res.ID)
-
-	t, err := jwt_.GenToken(res.Email, id)
-
-	if err != nil {
-		c.Status(500).JSON(&fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
-		return nil
-	}
-
-	c.Status(200).JSON(&fiber.Map{
-		"success": true,
-		"message": "✅",
-		"res": fiber.Map{
-			"accessToken": t,
-		},
-	})
-
-	return nil
-}
-
-func (ah *AuthHandlerInstance) Me(c *fiber.Ctx) error {
+func (lh *LinkHandlerInstance) List(c *fiber.Ctx) error {
+	input := inputs.LinkList{}
 
 	var tokenString string
 	authorization := c.Get("Authorization")
@@ -116,9 +61,68 @@ func (ah *AuthHandlerInstance) Me(c *fiber.Ctx) error {
 
 	}
 
+	// log.Println(claims)
+
+	userId := fmt.Sprintf("%v", claims["id"])
+
+	//  Parse body into product struct
+	if err := c.BodyParser(&input); err != nil {
+		log.Println(err)
+		c.Status(400).JSON(&fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+		return nil
+	}
+
+	if reflect.ValueOf(input).IsZero() {
+		input.Limit = 10
+	}
+
+	if reflect.ValueOf(input).IsZero() {
+		input.Page = (1 - 1) * input.Limit
+	} else {
+		input.Page = (input.Page - 1) * input.Limit
+	}
+
+	res, err := services.LinkList(input, userId)
+
+	if err != nil {
+		log.Println(err)
+		c.Status(400).JSON(&fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+		return nil
+	}
+
 	c.Status(200).JSON(&fiber.Map{
 		"success": true,
-		"message": claims,
+		"message": "✅",
+		"res":     res,
+	})
+
+	return nil
+}
+
+func (lh *LinkHandlerInstance) GetLink(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	res, err := services.GetLink(id)
+
+	if err != nil {
+		log.Println(err)
+		c.Status(400).JSON(&fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+		return nil
+	}
+
+	c.Status(200).JSON(&fiber.Map{
+		"success": true,
+		"message": "✅",
+		"res":     res,
 	})
 
 	return nil

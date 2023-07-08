@@ -50,7 +50,7 @@ func (uh *UserHandlerInstance) Register(c *fiber.Ctx) error {
 	return nil
 }
 
-func (uh *UserHandlerInstance) Get(c *fiber.Ctx) error {
+func (uh *UserHandlerInstance) GetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	res, err := services.GetUser(id)

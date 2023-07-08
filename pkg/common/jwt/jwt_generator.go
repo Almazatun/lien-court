@@ -11,7 +11,7 @@ func GenToken(email, id string) (t string, err error) {
 	day := time.Hour * 24
 	// Create the JWT claims, which includes the user ID and expiry time
 	claims := jtoken.MapClaims{
-		"ID":    id,
+		"id":    id,
 		"email": email,
 		"exp":   time.Now().Add(day * 1).Unix(),
 	}
