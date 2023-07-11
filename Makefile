@@ -30,4 +30,9 @@ ifneq (undefined, $(filter $(DB_USER),$(DB_PASS),$(DB_NAME),$(DB_HOST),$(DB_PORT
 else
 	@echo 'Please define in .env file variables DB_USER, DB_PASS, DB_NAME, DB_HOST, DB_PORT'
 endif
+
+test:
+	@echo 'Testing app'
+	go test -v -timeout 30s -coverprofile=cover.out -cover ./...
+	go tool cover -func=cover.out
 	
