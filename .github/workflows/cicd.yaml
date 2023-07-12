@@ -6,17 +6,60 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  PORT: ${{ secrets.LIEN_COURT_PORT }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PASS: ${{ secrets.DB_PASS }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+
 jobs:
 
   audit:
     runs-on: ubuntu-20.04
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASS }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
+        ports:
+          - ${{ env.DB_PORT }}:${{ env.DB_PORT }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v3
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.19.x'
+
       - name: Install dependencies
         run: go get ./cmd/
+
       - name: Build
         run: go build -v ./cmd/main.go
+
+      - name: Install golang-migrate pkg
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.12.2/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate.linux-amd64 /usr/bin/migrate
+          which migrate
+
+      - name: Run migrations
+        run: make migrateup
+
+      - name: Run test
+        run: make test
+
+
+    
+    
