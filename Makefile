@@ -1,5 +1,5 @@
 #!make
-include .env
+# include .env
 
 DB_PATH=pkg/database/migrations
 
