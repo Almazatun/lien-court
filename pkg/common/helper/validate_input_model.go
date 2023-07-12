@@ -12,7 +12,7 @@ type SchemaFiledErr struct {
 
 var Validator = validator.New()
 
-func ValidateSchema[T any](schema T) (schemaErrs []SchemaFiledErr, err error) {
+func ValidateInputModel[T any](schema T) (schemaErrs []SchemaFiledErr, err error) {
 	e := Validator.Struct(schema)
 
 	if e != nil {
