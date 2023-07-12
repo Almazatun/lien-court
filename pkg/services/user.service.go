@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
 	inputs "github.com/almazatun/lien-court/pkg/common"
@@ -12,6 +13,7 @@ import (
 
 func CreateUser(registerInput inputs.Register) (r *inputs.Register, err error) {
 	u := entities.User{}
+	fmt.Println(registerInput)
 
 	row, err := database.DB.Query(`SELECT * FROM "user" WHERE email = $1`, registerInput.Email)
 

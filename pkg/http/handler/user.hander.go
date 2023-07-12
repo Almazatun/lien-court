@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 
 	inputs "github.com/almazatun/lien-court/pkg/common"
@@ -43,6 +44,8 @@ func (uh *UserHandlerInstance) Register(c *fiber.Ctx) error {
 		})
 		return nil
 	}
+
+	fmt.Println(registerInput)
 
 	res, err := services.CreateUser(registerInput)
 

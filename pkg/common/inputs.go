@@ -7,8 +7,8 @@ type Login struct {
 
 type Register struct {
 	Email string `json:"email" validate:"required,email"`
-	Pass  string `json:"password validate:"required,min=4"`
-	Name  string `json:"username" validate:"required,`
+	Pass  string `json:"password" validate:"required,min=4"`
+	Name  string `json:"username" validate:"required"`
 }
 
 type LinkList struct {

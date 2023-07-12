@@ -33,6 +33,6 @@ func main() {
 func loadENVs() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Println("Error loading .env variables 🔴")
+		fmt.Println("🔴 Error loading .env variables")
 	}
 }

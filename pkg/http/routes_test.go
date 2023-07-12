@@ -38,17 +38,6 @@ func TestRoutes(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	registerUserData := `{
-		"username": "bla",
-		"email": "bla",
-		"password": "bla"
-	}`
-
-	loginUserData := `{
-		"email": "bla",
-		"password": "bla"
-	}`
-
 	// Define a structure for specifying input and output data of a single test case.
 	tests := []struct {
 		description   string
@@ -61,23 +50,65 @@ func TestRoutes(t *testing.T) {
 		isPrivate     bool
 	}{
 		{
-			description:   "register user",
-			route:         "/api/v1/users/register",
-			method:        "POST",
-			tokenString:   "",
-			body:          strings.NewReader(registerUserData),
+			description: "register user",
+			route:       "/api/v1/users/register",
+			method:      "POST",
+			tokenString: "",
+			body: strings.NewReader(
+				`{
+					"username": "bla",
+					"email": "bla@gmail.com",
+					"password": "hello@__"
+				}`,
+			),
 			expectedError: false,
 			expectedCode:  200,
 			isPrivate:     false,
 		},
 		{
-			description:   "login user",
-			route:         "/api/v1/auth/login",
-			method:        "POST",
-			tokenString:   "",
-			body:          strings.NewReader(loginUserData),
+			description: "login user",
+			route:       "/api/v1/auth/login",
+			method:      "POST",
+			tokenString: "",
+			body: strings.NewReader(
+				`{
+					"email": "bla@gmail.com",
+					"password": "hello@__"
+				}`,
+			),
 			expectedError: false,
 			expectedCode:  200,
+			isPrivate:     false,
+		},
+		{
+			description: "register user with invalid email",
+			route:       "/api/v1/users/register",
+			method:      "POST",
+			tokenString: "",
+			body: strings.NewReader(
+				`{
+					"username": "bla",
+					"email": "bla",
+					"password": "bla001"
+				}`,
+			),
+			expectedError: false,
+			expectedCode:  400,
+			isPrivate:     false,
+		},
+		{
+			description: "login user with invalid email",
+			route:       "/api/v1/auth/login",
+			method:      "POST",
+			tokenString: "",
+			body: strings.NewReader(
+				`{
+					"email": "bla",
+					"password": "bla001"
+				}`,
+			),
+			expectedError: false,
+			expectedCode:  400,
 			isPrivate:     false,
 		},
 		{
