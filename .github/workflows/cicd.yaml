@@ -14,6 +14,7 @@ env:
   DB_PORT: ${{ secrets.DB_PORT }}
   DB_NAME: ${{ secrets.DB_NAME }}
   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  NODE_EVN: ${{ secrets.NODE_ENV }}
 
 jobs:
 

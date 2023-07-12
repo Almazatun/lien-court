@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/almazatun/lien-court/pkg/common/helper"
 	"github.com/almazatun/lien-court/pkg/database"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -27,8 +28,11 @@ var accessToken string = ""
 
 func TestRoutes(t *testing.T) {
 	// Load .env.test file from the root folder.
-	if err := godotenv.Load("../../.env"); err != nil {
-		panic(err)
+
+	if helper.GetEnvVar("NODE_ENV") == "dev" {
+		if err := godotenv.Load("../../.env"); err != nil {
+			panic(err)
+		}
 	}
 
 	err := database.ConnectDB()
