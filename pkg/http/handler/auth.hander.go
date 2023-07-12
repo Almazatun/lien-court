@@ -33,6 +33,19 @@ func (ah *AuthHandlerInstance) Login(c *fiber.Ctx) error {
 		return nil
 	}
 
+	// Validation
+	errors, err := helper.ValidateInputModel[inputs.Login](loginUserInput)
+
+	if err != nil {
+		log.Println(err)
+		c.Status(400).JSON(&fiber.Map{
+			"success": false,
+			"message": err.Error(),
+			"errors":  errors,
+		})
+		return nil
+	}
+
 	res, err := services.Login(loginUserInput)
 
 	if err != nil {
