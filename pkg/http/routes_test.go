@@ -125,6 +125,34 @@ func TestRoutes(t *testing.T) {
 			expectedCode:  200,
 			isPrivate:     true,
 		},
+		{
+			description: "create link",
+			route:       "/api/v1/links",
+			method:      "POST",
+			tokenString: "Bearer ",
+			body: strings.NewReader(
+				`{
+					"link": "https://github.com/Almazatun"
+				}`,
+			),
+			expectedError: false,
+			expectedCode:  200,
+			isPrivate:     true,
+		},
+		{
+			description: "create link with invalid link",
+			route:       "/api/v1/links",
+			method:      "POST",
+			tokenString: "Bearer ",
+			body: strings.NewReader(
+				`{
+					"link": "asdfasdfaga"
+				}`,
+			),
+			expectedError: false,
+			expectedCode:  400,
+			isPrivate:     true,
+		},
 	}
 
 	// Define a new Fiber app.
