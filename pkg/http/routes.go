@@ -26,5 +26,6 @@ func PublicRoutes(a *fiber.App) {
 
 	// Link
 	route.Get("links", middleware.JWTProtected(), linkHandler.List)
-	route.Get("links/:id", middleware.JWTProtected(), linkHandler.GetLink)
+	route.Post("links", middleware.JWTProtected(), linkHandler.Create)
+	route.Get("links/:id", linkHandler.GetLink)
 }

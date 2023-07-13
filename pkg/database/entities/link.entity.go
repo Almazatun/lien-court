@@ -7,6 +7,7 @@ type Link struct {
 	Short     string    `json:"short"`
 	Original  string    `json:"original"`
 	CreatedAt any       `json:"created_at"`
+	UserID    uuid.UUID `json:"user_id"`
 }
 
 type Links struct {

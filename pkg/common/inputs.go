@@ -16,6 +16,10 @@ type LinkList struct {
 	Page  int `json:"page"`
 }
 
+type CreateLink struct {
+	Link string `json:"link"`
+}
+
 type JWTData struct {
 	ID    string
 	Email string
