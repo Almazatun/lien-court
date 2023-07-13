@@ -24,5 +24,10 @@ $ make run
 # Migration up
 $ make migrateup
 # Migration down
-$ make mgratedown
+$ make migratedown
+```
+### API
+```bash
+# Create link
+curl -d '{ "link":"original_url" }' -H "Content-Type: application/json" -H "Authorization: Bearer ${TOKEN}" -X POST http://localhost:${PORT}/api/v1/links
 ```
