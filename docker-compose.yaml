@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: postgres_db
+    build:
+      context: ./pkg/database
+      dockerfile: ./Dockerfile
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres_services:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: "exit 0"
+    networks:
+      - new
+
+  migrate:
+    image: migrate/migrate
+    env_file:
+      - .env
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+    volumes:
+      - ./pkg/database/migrations:/migrations
+      # ${DB_PASS}@<postgres>:${DB_PORT} - <postgres> is port of service
+    command: ["-path", "/migrations", "-database", "postgresql://${DB_USER}:${DB_PASS}@postgres:${DB_PORT}/${DB_NAME}?sslmode=disable", "up"]
+    networks:
+      - new
+    depends_on:
+      postgres:
+        condition: service_healthy
+    links: 
+      - postgres
+    restart: on-failure
+
+  lien_court_app:
+    container_name: lien_court
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: "exit 0"
+    networks:
+      - new
+    links: 
+      - postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_services:
+    driver: local
+
+networks:
+  new:
+    driver: bridge
+
