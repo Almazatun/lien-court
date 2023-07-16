@@ -35,4 +35,12 @@ test:
 	@echo 'Testing app'
 	go test -v -timeout 30s -coverprofile=cover.out -cover ./...
 	go tool cover -func=cover.out
+
+compose_up:
+	@echo 'Run app with database'
+	docker-compose up --build -d
+
+compose_down:
+	@echo 'Stop running app with docker-compose'
+	docker-compose down
 	

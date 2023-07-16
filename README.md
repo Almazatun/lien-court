@@ -18,6 +18,13 @@ $ make build
 ```bash
 $ make run
 ```
+### Commands with docker-compose
+```bash
+# Run app with database
+$ make compose_up
+# Stop services
+$ make compose_down
+```
 
 ### Database
 ```bash
